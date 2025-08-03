@@ -8,6 +8,7 @@ git clone https://github.com/teju-devopss/$COMPONENT .
 
 source /parameters/params
 
-if ["$SCHEMA_TYPE" == 'mongo' ]; then
-mongosh dev-roboshop-docdb.cluster-cqxq6884ocuz.us-east-1.docdb.amazonaws.com:27017 --tls --tlsCAFile global-bundle.pem --retryWrites=false --username admin1 --password <insertYourPassword>
+if [ "$SCHEMA_TYPE" == "mongo" ]; then
+curl -L -O https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+mongosh $DOCDB_ENDPOINT:27017 --tls --tlsCAFile global-bundle.pem --retryWrites=false --username $DOCDB_USER --password $DOCDB_PASS </app/schema/$COMPONENT.js
 fi
