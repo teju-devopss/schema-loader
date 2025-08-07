@@ -1,7 +1,5 @@
-FROM redhat/ubi8
+FROM           redhat/ubi8
 
-# Install prerequisites
-RUN yum install -y yum-utils curl git mysql && yum clean all
 
 # Copy and execute install.sh
 COPY          install.sh /
