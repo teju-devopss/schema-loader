@@ -9,7 +9,7 @@ source /parameters/params
 git clone https://github.com/teju-devopss/learn-kubernetes.git /app
 
 # Navigate to correct schema folder
-cd /app/${COMPONENT}/schema
+cd /app/z-roboshop-project/${COMPONENT}/schema
 
 # Load schema based on SCHEMA_TYPE
 if [ "$SCHEMA_TYPE" == "mongo" ]; then
