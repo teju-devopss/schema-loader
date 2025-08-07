@@ -1,23 +1,26 @@
-FROM amazonlinux:2
+FROM ubuntu:20.04
 
-# Install common dependencies
-RUN yum install -y yum-utils git curl unzip wget
+# Set noninteractive for clean install
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install MongoDB Shell
-RUN curl -o /etc/yum.repos.d/mongodb-org-4.2.repo https://repo.mongodb.org/yum/amazon/2/mongodb-org/4.2/x86_64/mongodb-org-4.2.repo && \
-    yum install -y mongodb-org-shell
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl gnupg git wget unzip lsb-release software-properties-common
 
-# Install MySQL Client
-RUN yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm && \
-    yum install -y mysql
+# Install MongoDB Shell (mongosh)
+RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg && \
+    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list && \
+    apt-get update && apt-get install -y mongodb-mongosh
 
-# Clean cache
-RUN yum clean all
+# Install MySQL client
+RUN apt-get install -y mysql-client
 
-# Copy your install script
+# Clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Add your files
 COPY install.sh /
 RUN bash /install.sh
 
-# Copy and set entrypoint
 COPY run.sh /
 ENTRYPOINT ["bash", "/run.sh"]
