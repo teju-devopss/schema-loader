@@ -21,7 +21,7 @@ git clone https://github.com/teju-devopss/learn-kubernetes.git /app
 
 cd /app/schema/${component}
 
-# Load the schema based on db type
+# Load schema
 if [ "$db" == "mongo" ]; then
   mongo --host ${MONGO_ENDPOINT} < ${component}.js
 elif [ "$db" == "mysql" ]; then
