@@ -1,26 +1,31 @@
-FROM ubuntu:20.04
+# Base image
+FROM amazonlinux:2
 
-# Set noninteractive for clean install
-ENV DEBIAN_FRONTEND=noninteractive
+# Set environment variables
+ENV COMPONENT=shipping
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    curl gnupg git wget unzip lsb-release software-properties-common
+# Install required packages
+RUN yum install -y \
+    curl \
+    git \
+    yum-utils \
+    mysql \
+    && yum clean all
 
-# Install MongoDB Shell (mongosh)
-RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg && \
-    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list && \
-    apt-get update && apt-get install -y mongodb-mongosh
+# Add MongoDB repo and install mongosh
+RUN curl -o /etc/yum.repos.d/mongodb-org-4.2.repo \
+    https://repo.mongodb.org/yum/amazon/2/mongodb-org/4.2/x86_64/mongodb-org-4.2.repo && \
+    yum install -y mongodb-org-shell && \
+    yum clean all
 
-# Install MySQL client
-RUN apt-get install -y mysql-client
+# Create directories
+RUN mkdir -p /app /parameters
 
-# Clean up
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Add your files
+# Copy the install script
 COPY install.sh /
+
+# Run the install script
 RUN bash /install.sh
 
-COPY run.sh /
-ENTRYPOINT ["bash", "/run.sh"]
+# Default workdir
+WORKDIR /app
