@@ -1,4 +1,4 @@
-FROM amazonlinux:2
+FROM redhat/ubi8
 
 # Install prerequisites
 RUN yum install -y yum-utils curl git mysql && yum clean all
