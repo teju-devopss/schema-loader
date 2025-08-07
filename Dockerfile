@@ -1,4 +1,4 @@
-FROM      dokken/centos-8
+FROM       amazonlinux:2
 
 # Install required tools
 #RUN yum install -y yum-utils git curl unzip && \
