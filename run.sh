@@ -8,7 +8,8 @@ source /parameters/params
 # Clone schema repo
 git clone https://github.com/teju-devopss/learn-kubernetes.git /app
 
-cd /app/schema/${COMPONENT}
+# Navigate to correct schema folder
+cd /app/${COMPONENT}/schema
 
 # Load schema based on SCHEMA_TYPE
 if [ "$SCHEMA_TYPE" == "mongo" ]; then
@@ -19,4 +20,3 @@ else
   echo "Unsupported schema type: $SCHEMA_TYPE"
   exit 1
 fi
-
