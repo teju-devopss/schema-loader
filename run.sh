@@ -1,19 +1,32 @@
 #!/bin/bash
 set -e
+set -x
 
-mkdir -p /app
-cd /app
-git clone https://github.com/teju-devopss/$COMPONENT .
+mkdir -p /parameters
+> /parameters/params
 
-# Load environment variables
+# Fetch parameters from SSM and export to /parameters/params
+for param in $PARAMS ; do
+  PARAM=$(echo $param | awk -F, '{print $1}')
+  KEY=$(echo $param | awk -F, '{print $2}')
+  VALUE=$(aws ssm get-parameter --name $PARAM --region us-east-1 --with-decryption --query "Parameter.Value" --output text)
+  echo "export $KEY=\"$VALUE\"" >> /parameters/params
+done
+
+# Source parameters
 source /parameters/params
 
-if [ "$SCHEMA_TYPE" == "mongo" ]; then
-  curl -L -O https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
-  mongosh $DOCDB_ENDPOINT:27017 --tls --tlsCAFile global-bundle.pem --retryWrites=false \
-    --username $DOCDB_USER --password $DOCDB_PASS </app/schema/$COMPONENT.js
-fi
+# Clone your app repo
+git clone https://github.com/teju-devopss/learn-kubernetes.git /app
 
-if [ "$SCHEMA_TYPE" == "mysql" ]; then
-  mysql -h $DB_HOST -u$DOCDB_USER -p$DOCDB_PASS </app/schema/$COMPONENT.sql
+cd /app/schema/${component}
+
+# Load the schema based on db type
+if [ "$db" == "mongo" ]; then
+  mongo --host ${MONGO_ENDPOINT} < ${component}.js
+elif [ "$db" == "mysql" ]; then
+  mysql -h ${MYSQL_HOST} -u${MYSQL_USER} -p${MYSQL_PASSWORD} < /app/schema/${component}/shipping.sql
+else
+  echo "Unsupported DB: $db"
+  exit 1
 fi
