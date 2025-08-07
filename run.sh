@@ -30,8 +30,7 @@ source /parameters/params
 
 if [ "$SCHEMA_TYPE" == "mongo" ]; then
   curl -L -O https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
-  mongosh $DOCDB_ENDPOINT:27017 --tls --tlsCAFile global-bundle.pem --retryWrites=false \
-    --username $DOCDB_USER --password $DOCDB_PASS </app/schema/$COMPONENT.js
+  mongo $DOCDB_ENDPOINT:27017 --ssl --sslCAFile global-bundle.pem --username $DOCDB_USER --password $DOCDB_PASS </app/schema/$COMPONENT.js
 fi
 
 if [ "$SCHEMA_TYPE" == "mysql" ]; then
