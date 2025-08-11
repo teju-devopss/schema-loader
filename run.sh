@@ -5,7 +5,7 @@
 mkdir /app
 # shellcheck disable=SC2164
 cd /app
-git clone https://github.com/teju-devopss/$COMPONENT
+git clone https://github.com/teju-devopss/$COMPONENT .
 
 source /parameters/params
 
