@@ -1,22 +1,18 @@
-#!/bin/bash
-set -e
-set -x
+# We assume we get the following variables from K8S
+# COMPONENT
+# SCHEMA_TYPE
 
-# Load parameters from init container
+mkdir /app
+cd /app
+git clone https://github.com/raghudevopsb77/$COMPONENT .
+
 source /parameters/params
 
-# Clone schema repo
-git clone https://github.com/teju-devopss/learn-kubernetes.git /app
-
-# Navigate to correct schema folder
-cd /app/z-roboshop-project/${COMPONENT}/schema
-
-# Load schema based on SCHEMA_TYPE
 if [ "$SCHEMA_TYPE" == "mongo" ]; then
-  mongo --host ${DOCDB_ENDPOINT} -u ${DOCDB_USER} -p ${DOCDB_PASS} < ${COMPONENT}.js
-elif [ "$SCHEMA_TYPE" == "mysql" ]; then
-  mysql -h ${MYSQL_HOST} -u${MYSQL_USER} -p${MYSQL_PASSWORD} < ${COMPONENT}.sql
-else
-  echo "Unsupported schema type: $SCHEMA_TYPE"
-  exit 1
+  curl -L -O https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+  mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile global-bundle.pem --username $DOCDB_USER --password $DOCDB_PASS < /app/schema/$COMPONENT.js
+fi
+
+if [ "$SCHEMA_TYPE" == "mysql" ]; then
+  mysql -h $DB_HOST -u$DB_USER -p$DB_PASS </app/schema/$COMPONENT.sql
 fi
