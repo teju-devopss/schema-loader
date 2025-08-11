@@ -7,12 +7,12 @@ pipeline {
   stages {
     stage('Docker build') {
      steps {
-       sh 'docker build -t docker.io/tejaswinidockerhub/schema-loading .'
+       sh 'docker build -t docker.io/tejaswinidockerhub/devops-schema-loading .'
        }
      }
     stage('Docker push') {
       steps {
-        sh 'docker push docker.io/tejaswinidockerhub/schema-loading'
+        sh 'docker push docker.io/tejaswinidockerhub/devops-schema-loading'
       }
     }
   }
