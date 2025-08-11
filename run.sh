@@ -4,7 +4,7 @@
 
 mkdir /app
 cd /app
-git clone https://github.com/raghudevopsb77/$COMPONENT .
+git clone https://github.com/teju-devopss/$COMPONENT
 
 source /parameters/params
 
