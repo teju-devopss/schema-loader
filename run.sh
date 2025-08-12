@@ -16,5 +16,5 @@ if [ "$SCHEMA_TYPE" == "mongo" ]; then
 fi
 
 if [ "$SCHEMA_TYPE" == "mysql" ]; then
-  mysql -h $DB_HOST -u$DB_USER -p$DB_PASS </app/schema/$COMPONENT.sql
+  mysql -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASS" </app/schema/$COMPONENT.sql
 fi
